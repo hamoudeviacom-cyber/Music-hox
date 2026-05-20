@@ -1,0 +1,25 @@
+{
+  "name": "lava-music-bot",
+  "version": "1.0.0",
+  "description": "Discord Music Bot with LavaLink support",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": [
+    "discord",
+    "music",
+    "bot",
+    "lavalink",
+    "erela"
+  ],
+  "author": "AjiDev",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.15.0",
+    "erela.js": "^2.3.2",
+    "dotenv": "^16.4.0"
+  }
+}
