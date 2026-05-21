@@ -12,14 +12,13 @@
     "discord",
     "music",
     "bot",
-    "lavalink",
-    "erela"
+    "lavalink"
   ],
   "author": "AjiDev",
   "license": "MIT",
   "dependencies": {
     "discord.js": "^14.15.0",
-    "erela.js": "^2.3.2",
+    "erela.js-basics": "^1.0.4",
     "dotenv": "^16.4.0"
   }
 }

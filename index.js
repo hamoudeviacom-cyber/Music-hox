@@ -1,5 +1,6 @@
+import 'dotenv/config';
 import { Client, GatewayIntentBits, Collection } from 'discord.js';
-import { Manager } from 'erela.js';
+import { Manager } from 'erela.js-basics';
 import { readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -27,6 +28,7 @@ const manager = new Manager({
     const guild = client.guilds.cache.get(id);
     if (guild) guild.shard.send(payload);
   },
+  autoPlay: true,
 });
 
 // Event: Client ready
@@ -46,7 +48,7 @@ manager.on('nodeConnect', (node) => {
 
 // Event: Manager node error
 manager.on('nodeError', (node, error) => {
-  console.error(`❌ Lavalink Node Error: ${node.options.identifier}`, error);
+  console.error(`❌ Lavalink Node Error: ${node.options.identifier}`, error.message);
 });
 
 // Event: Track start
@@ -97,11 +99,6 @@ manager.on('queueEnd', (player) => {
   }, config.AUTO_DISCONNECT);
 });
 
-// Event: Track end
-manager.on('trackEnd', (player, track, payload) => {
-  if (payload.reason === 'REPLACED') return;
-});
-
 // Load commands
 const commandFiles = readdirSync(join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
 
@@ -138,6 +135,7 @@ client.on('messageCreate', async (message) => {
 
 // Helper function: Format duration
 function formatDuration(ms) {
+  if (!ms) return '0:00';
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
@@ -148,48 +146,9 @@ function formatDuration(ms) {
   return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
-// Event: InteractionCreate (for buttons/select menus)
-client.on('interactionCreate', async (interaction) => {
-  if (!interaction.isButton()) return;
-
-  const { customId } = interaction;
-
-  if (customId === 'music-pause') {
-    const player = manager.players.get(interaction.guildId);
-    if (!player) return;
-
-    if (player.paused) {
-      await player.pause(false);
-      await interaction.update({ components: [createPauseButton(false)] });
-    } else {
-      await player.pause(true);
-      await interaction.update({ components: [createPauseButton(true)] });
-    }
-  }
-
-  if (customId === 'music-skip') {
-    const player = manager.players.get(interaction.guildId);
-    if (player) await player.stop();
-    await interaction.reply({ content: '⏭️ Skipped!', ephemeral: true });
-  }
-});
-
-// Helper function: Create pause button
-function createPauseButton(isPaused) {
-  return {
-    type: 1,
-    components: [{
-      type: 2,
-      style: 2,
-      label: isPaused ? '▶️ Resume' : '⏸️ Pause',
-      custom_id: 'music-pause',
-    }],
-  };
-}
-
 // Login to Discord
 client.login(config.DISCORD_TOKEN).catch((error) => {
-  console.error('Failed to login:', error);
+  console.error('Failed to login:', error.message);
   process.exit(1);
 });
 
