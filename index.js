@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Client, GatewayIntentBits, Collection } from 'discord.js';
-import { Manager } from 'erela.js-basics';
+import { Manager } from 'erela.js';
 import { readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -28,7 +28,6 @@ const manager = new Manager({
     const guild = client.guilds.cache.get(id);
     if (guild) guild.shard.send(payload);
   },
-  autoPlay: true,
 });
 
 // Event: Client ready
